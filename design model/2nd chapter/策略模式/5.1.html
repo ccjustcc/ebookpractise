@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>使用策略模式计算奖金</title>
+</head>
+
+<body>
+    <script>
+    //这是原来的
+    var calculateBonus = function(performanceLevel, salary) {
+        if (performanceLevel === 'S') {
+            return salary * 4;
+        }
+        if (performanceLevel === 'A') {
+            return salary * 3;
+        }
+        if (performanceLevel === 'B') {
+            return salary * 2;
+        }
+    };
+
+    //step 1 使用组合函数重构代码
+    //有毛线区别
+    var performanceS = function(salary) {
+        return salary * 4;
+    };
+    var performanceA = function(salary) {
+        return salary * 3;
+    };
+    var performanceB = function(salary) {
+        return salary * 2;
+    };
+    var calculateBonus = function(performanceLevel, salary) {
+        if (performanceLevel === 'S') {
+            return performanceS(salary);
+        }
+        if (performanceLevel === 'A') {
+            return performanceA(salary);
+        }
+        if (performanceLevel === 'B') {
+            return performanceB(salary);
+        }
+    };
+
+    //使用策略模式解决
+    // 使用策略模式来重构代码。 策略模式指的是定义一系
+    // 列的算法， 把它们一个个封装起来。 将不变的部分和变化的部分隔开是每个设计模式的主题， 策
+    // 略模式也不例外， 策略模式的目的就是将算法的使用与算法的实现分离开来。
+
+    // 一个基于策略模式的程序至少由两部分组成。第一个部分是一组策略类，策略类封装了具体
+    // 的算法，并负责具体的计算过程。 第二个部分是环境类 Context，Context接受客户的请求，随后
+    // 把请求委托给某一个策略类。要做到这点，说明 Context中要维持对某个策略对象的引用。
+
+
+    //这是模仿面向对象的实现方式
+    //定义策略类
+    var performanceS = function() {};
+    performanceS.prototype.calculate = function(salary) {
+        return salary * 4;
+    };
+    var performanceA = function() {};
+    performanceA.prototype.calculate = function(salary) {
+        return salary * 3;
+    };
+    var performanceB = function() {};
+    performanceB.prototype.calculate = function(salary) {
+        return salary * 2;
+    };
+
+    //Content 就是算法的使用者
+    // 接下来定义奖金类 Bonus：
+    var Bonus = function() {
+        this.salary = null; // 原始工资
+        this.strategy = null; // 绩效等级对应的策略对象
+    };
+    Bonus.prototype.setSalary = function(salary) {
+        this.salary = salary; // 设置员工的原始工资
+    };
+    Bonus.prototype.setStrategy = function(strategy) {
+        this.strategy = strategy; // 设置员工绩效等级对应的策略对象
+    };
+    Bonus.prototype.getBonus = function() { // 取得奖金数额
+        return this.strategy.calculate(this.salary); // 把计算奖金的操作委托给对应的策略对象
+    };
+
+    var bonus = new Bonus();
+    bonus.setSalary(10000);
+    bonus.setStrategy(new performanceS()); // 设置策略对象
+    console.log(bonus.getBonus()); // 输出：40000
+    bonus.setStrategy(new performanceA()); // 设置策略对象
+    console.log(bonus.getBonus()); // 输出：30000
+
+    
+
+    </script>
+</body>
+
+</html>
